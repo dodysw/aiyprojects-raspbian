@@ -67,6 +67,8 @@ class JoyDetector(object):
         self._joy_score_window = collections.deque(maxlen=WINDOW_SIZE)
         self._run_event = threading.Event()
         self.hchat = HChat()
+        self.happiness_index_count = 0
+        self.happiness_index_last_avg = 0
         signal.signal(signal.SIGINT, lambda signal, frame: self.stop())
         signal.signal(signal.SIGTERM, lambda signal, frame: self.stop())
 
@@ -135,8 +137,14 @@ class JoyDetector(object):
                     joy_score = 0.0
                     if faces:
                         joy_score = sum([face.joy_score for face in faces]) / len(faces)
-                        print("Joy: %s" % joy_score)
-                        self.hchat.notify("Face detected score: %s" % joy_score)
+
+                        # Calculate running average
+                        happiness_index = (self.happiness_index_last_avg * self.happiness_index_count + joy_score) / (self.happiness_index_count + 1)
+                        self.happiness_index_count += 1
+                        self.happiness_index_last_avg = happiness_index
+
+                        print("Joy: %s | Happiness index: %s" % (joy_score, happiness_index))
+                        self.hchat.notify("Face detected score: %s | Happiness count/average: %s / %s" % (joy_score, self.happiness_index_count, happiness_index))
 
                     # Append new joy score to the window and calculate mean value.
                     self._joy_score_window.append(joy_score)

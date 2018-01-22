@@ -29,6 +29,8 @@ from aiy.vision.inference import CameraInference
 from aiy.vision.models import face_detection
 from picamera import PiCamera
 
+from hchat import HChat
+
 JOY_COLOR = (255, 70, 0)
 SAD_COLOR = (0, 0, 64)
 NONE_COLOR = (0, 0, 1)
@@ -64,6 +66,7 @@ class JoyDetector(object):
         self._joy_score = 0.0
         self._joy_score_window = collections.deque(maxlen=WINDOW_SIZE)
         self._run_event = threading.Event()
+        self.hchat = HChat()
         signal.signal(signal.SIGINT, lambda signal, frame: self.stop())
         signal.signal(signal.SIGTERM, lambda signal, frame: self.stop())
 
@@ -113,7 +116,8 @@ class JoyDetector(object):
             time.sleep(0.1)
 
     def _run_detector(self):
-        with PiCamera() as camera, PrivacyLED():
+        # with PiCamera() as camera, PrivacyLED():
+        with PiCamera() as camera:
             # Forced sensor mode, 1640x1232, full FoV. See:
             # https://picamera.readthedocs.io/en/release-1.13/fov.html#sensor-modes
             # This is the resolution inference run on.
@@ -131,6 +135,7 @@ class JoyDetector(object):
                     joy_score = 0.0
                     if faces:
                         joy_score = sum([face.joy_score for face in faces]) / len(faces)
+                        self.hchat.notify("Face detected score: %s" % joy_score)
 
                     # Append new joy score to the window and calculate mean value.
                     self._joy_score_window.append(joy_score)

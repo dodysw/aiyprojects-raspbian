@@ -135,6 +135,7 @@ class JoyDetector(object):
                     joy_score = 0.0
                     if faces:
                         joy_score = sum([face.joy_score for face in faces]) / len(faces)
+                        print("Joy: %s" % joy_score)
                         self.hchat.notify("Face detected score: %s" % joy_score)
 
                     # Append new joy score to the window and calculate mean value.

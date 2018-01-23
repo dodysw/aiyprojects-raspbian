@@ -20,6 +20,7 @@ import signal
 import sys
 import threading
 import time
+import logging
 
 from aiy._drivers._hat import get_aiy_device_name
 from aiy._drivers._rgbled import PrivacyLED
@@ -155,6 +156,7 @@ class JoyDetector(object):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--num_frames',

@@ -97,7 +97,10 @@ class HChat:
         return r
 
     @limit(1, 5)    # limit 1 call every 5 seconds
-    def notify(self, msg, color=None, token=None, room=None):
+    def notify(self, msg, color=None, token=None, room=None, data=None):
+        if data is not None:
+            with open('hchat_notify_data.json', 'w') as f:
+                json.dump(data, f)
         if token is None:
             token = self.default_token
         if room is None:

@@ -21,6 +21,7 @@ import sys
 import threading
 import time
 import logging
+import json
 
 from aiy._drivers._hat import get_aiy_device_name
 from aiy._drivers._rgbled import PrivacyLED
@@ -145,7 +146,8 @@ class JoyDetector(object):
                         self.happiness_index_last_avg = happiness_index
 
                         print("Joy: %s | Happiness index: %s" % (joy_score, happiness_index))
-                        self.hchat.notify("Face detected score: %s | Happiness count/average: %s / %s" % (joy_score, self.happiness_index_count, happiness_index))
+                        data = dict(joy_score=joy_score, face_count=self.happiness_index_count, idx=happiness_index)
+                        self.hchat.notify("Face detected score: %s | Happiness count/average: %s / %s" % (joy_score, self.happiness_index_count, happiness_index), data=data)
 
                     # Append new joy score to the window and calculate mean value.
                     self._joy_score_window.append(joy_score)

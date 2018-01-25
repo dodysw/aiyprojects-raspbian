@@ -146,7 +146,7 @@ class JoyDetector(object):
                         self.happiness_index_count += 1
                         self.happiness_index_last_avg = happiness_index
 
-                        print("%s Joy: %s | Happiness index: %s" % (datetime.datetime.now(), joy_score, happiness_index))
+                        print("%s,%s,%s,%s" % (datetime.datetime.now(), self.happiness_index_count, joy_score, happiness_index))
                         data = dict(joy_score=joy_score, face_count=self.happiness_index_count, idx=happiness_index)
                         self.hchat.notify("Face detected score: %s | Happiness count/average: %s / %s" % (joy_score, self.happiness_index_count, happiness_index), data=data)
 

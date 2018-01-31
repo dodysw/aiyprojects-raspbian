@@ -1,3 +1,4 @@
+requests
 google-assistant-grpc==0.0.2
 google-cloud-speech==0.30.0
 google-auth-oauthlib==0.2.0

@@ -32,7 +32,7 @@ def limit(limit, every=1):
             try:
                 return fn(*args, **kwargs)
 
-            finally:                   # ensure semaphore release
+            finally:  # ensure semaphore release
                 timer = _threading.Timer(every, semaphore.release)
                 timer.setDaemon(True)  # allows the timer to be canceled on exit
                 timer.start()
@@ -40,6 +40,7 @@ def limit(limit, every=1):
         return wrapper
 
     return limitdecorator
+
 
 class HChat:
     def __init__(self, token=hipchat_config.token, room=hipchat_config.room, host=hipchat_config.host):
@@ -93,10 +94,14 @@ class HChat:
         raw_headers, body = raw_body.as_string().split('\n\n', 1)
         boundary = re.search('boundary="([^"]*)"', raw_headers).group(1)
         headers['Content-Type'] = 'multipart/related; boundary="{}"'.format(boundary)
-        r = requests.post(url, data=body, headers=headers)
-        return r
+        try:
+            r = requests.post(url, data=body, headers=headers)
+            return r
+        except requests.RequestException as e:
+            print("Send file error:", e)
+            return None
 
-    @limit(1, 5)    # limit 1 call every 5 seconds
+    @limit(1, 5)  # limit 1 call every 5 seconds
     def notify(self, msg, color=None, token=None, room=None, data=None):
         if data is not None:
             with open('hchat_notify_data.json', 'w') as f:
@@ -113,5 +118,9 @@ class HChat:
             "notify": True,
             "message_format": "text"
         }
-        r = requests.post(url, data=payload, headers=headers)
-        return r
+        try:
+            r = requests.post(url, data=payload, headers=headers)
+            return r
+        except requests.RequestException as e:
+            print("Notify error:", e)
+            return None

@@ -33,6 +33,7 @@ from aiy.vision.models import face_detection
 from picamera import PiCamera
 
 from hchat import HChat
+from stride import Stride
 
 JOY_COLOR = (255, 70, 0)
 SAD_COLOR = (0, 0, 64)
@@ -69,7 +70,8 @@ class JoyDetector(object):
         self._joy_score = 0.0
         self._joy_score_window = collections.deque(maxlen=WINDOW_SIZE)
         self._run_event = threading.Event()
-        self.hchat = HChat()
+        #self.hchat = HChat()
+        self.hchat = Stride()
         self.happiness_index_count = 0
         self.happiness_index_last_avg = 0
         signal.signal(signal.SIGINT, lambda signal, frame: self.stop())

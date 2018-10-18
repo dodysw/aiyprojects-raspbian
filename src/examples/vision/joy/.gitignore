@@ -1,1 +1,3 @@
 hipchat_config.py
+stride_config.py
+*.log
